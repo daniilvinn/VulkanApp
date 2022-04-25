@@ -1,17 +1,23 @@
 #pragma once
 
-class Application
-{
-public:
-	Application();
-	~Application();
+#include "ApplicationWindow.h"
 
-	void Run();
+namespace vkapp {
+	class Application
+	{
+	public:
+		Application();
+		~Application();
 
-private:
-	void Shutdown();
-	void Initialize();
+		void Run();
+		inline static Application* Get() { return s_AppInstance; };
 
-private:
-};
+	private:
+		void Shutdown();
+		void Initialize();
 
+	private:
+		static Application* s_AppInstance;
+		ApplicationWindow* m_Window;
+	};
+}

@@ -1,0 +1,6 @@
+[submodule "VulkanApp/vendor/GLFW"]
+	path = VulkanApp/vendor/GLFW
+	url = https://github.com/daniilvinn/glfw.git
+[submodule "VulkanApp/vendor/spdlog"]
+	path = VulkanApp/vendor/spdlog
+	url = https://github.com/gabime/spdlog.git

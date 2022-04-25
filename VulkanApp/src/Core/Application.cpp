@@ -1,30 +1,37 @@
 #include "Application.h"
-#include <iostream>
+#include "Logger.h"
 
-Application::Application()
-{
-	Initialize();
-}
+namespace vkapp {
+	Application* Application::s_AppInstance = nullptr;
 
-Application::~Application()
-{
-	Shutdown();
-}
-
-void Application::Run()
-{
-	while (true)
+	Application::Application()
 	{
-		std::cout << "Hello World!" << std::endl;
+		Initialize();
 	}
-}
 
-void Application::Shutdown()
-{
+	Application::~Application()
+	{
+		Shutdown();
+	}
 
-}
+	void Application::Run()
+	{
 
-void Application::Initialize()
-{
+		m_Window = new ApplicationWindow();
+		while (true)
+		{
 
+		}
+	}
+
+	void Application::Shutdown()
+	{
+		
+	}
+
+	void Application::Initialize()
+	{
+		if (s_AppInstance) VKAPP_LOG_ERROR("Application already exists!");
+		s_AppInstance = this;
+	}
 }
