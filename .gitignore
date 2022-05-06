@@ -40,6 +40,11 @@
 *.pdb
 *.idb
 *.opendb
+*.log
+*.ilk
 
 x64/
 .vs/
+
+bin/
+bin-int/
