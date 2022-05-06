@@ -3,9 +3,25 @@
 #include <vulkan/vulkan.h>
 #include <GLFW/glfw3.h>
 
+#include <VulkanRenderer/VulkanDevice.h>
+#include <VulkanRenderer/VulkanSwapchain.h>
+
+#include <utility>
 #include <vector>
+#include <memory>
+
 
 namespace vkapp {
+
+	using QueueFamilyInfo = std::pair<uint32_t, uint32_t>;
+
+	// Queue families info. First component of a pair represents queue family index
+	// and second component represents amount of queues in given family.
+	struct QueueFamiliesInfo {
+		QueueFamilyInfo graphicsQueues;
+		QueueFamilyInfo computeQueues;
+		QueueFamilyInfo transferQueues;
+	};
 
 	class VulkanContext {
 	public:
@@ -13,9 +29,12 @@ namespace vkapp {
 		~VulkanContext();
 
 		void Init();
+		static VulkanContext* Get() { return s_Instance; };
 
-		VkInstance* GetVkInstance() { return &m_VkInstance; }
+		static VkInstance GetVkInstance() { return s_Instance->m_VkInstance; }
 		// VkPhysicalDevice GetPhysicalDevice(); TO BE IMPLEMENTED
+		inline std::shared_ptr<VulkanDevice> GetDevice() { return std::make_shared<VulkanDevice>(*m_LogicalDevice); };
+
 
 	private:
 		std::vector<const char*> GetRequiredExtensions();
@@ -23,8 +42,16 @@ namespace vkapp {
 
 	private:
 		static VulkanContext* s_Instance;
+		static QueueFamiliesInfo s_Familiesinfo;
 		GLFWwindow* m_Handle;
 		VkInstance m_VkInstance;
+		std::shared_ptr<VulkanPhysicalDevice> m_PhysicalDevice;
+		std::shared_ptr<VulkanDevice> m_LogicalDevice;
+
+		std::shared_ptr<VulkanSwapchain> m_Swapchain;
+
+	private:
+		VkSurfaceKHR m_Surface;
 	};
 
 }

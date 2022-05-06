@@ -1,10 +1,17 @@
 #include "VulkanContext.h"
 #include <Core/Base.h>
+
+#include <Core/Application.h>
+
 #include <VulkanRenderer/VulkanLogger.h>
+#include <VulkanRenderer/VulkanDevice.h>
+
+#include <glfw/glfw3.h>
 
 namespace vkapp {
 
 	VulkanContext* VulkanContext::s_Instance = nullptr;
+	QueueFamiliesInfo VulkanContext::s_Familiesinfo = QueueFamiliesInfo{};
 
 	VulkanContext::VulkanContext(GLFWwindow* handle)
 	{
@@ -14,10 +21,12 @@ namespace vkapp {
 
 	VulkanContext::~VulkanContext()
 	{
-		vkDestroyInstance(m_VkInstance, nullptr);
 		if (VKAPP_ENABLE_VULKAN_MESSENGER) {
 			VulkanLogger::Shutdown(&m_VkInstance);
 		}
+		m_LogicalDevice->Destroy();
+		m_Swapchain->DestroySurface();
+		vkDestroyInstance(m_VkInstance, nullptr);
 	}
 
 	void VulkanContext::Init()
@@ -54,12 +63,23 @@ namespace vkapp {
 		if (VKAPP_ENABLE_VULKAN_MESSENGER) VulkanLogger::Init(&m_VkInstance);
 		// ================================================================
 
+		// ========= Creating Physical and Logical Devices Stage ==========
+		m_PhysicalDevice = VulkanPhysicalDevice::SelectDevice();
 
-		// TODO
-		uint32_t physicalDeviceCount = 0;
-		vkEnumeratePhysicalDevices(m_VkInstance, &physicalDeviceCount, nullptr);
-		std::vector<VkPhysicalDevice> physical_devices(physicalDeviceCount);
-		vkEnumeratePhysicalDevices(m_VkInstance, &physicalDeviceCount, physical_devices.data());
+		// FIX: double VulkanPhysicalDevice constructor invoñation
+		VkPhysicalDeviceFeatures enabledFeatures;
+		memset(&enabledFeatures, 0, sizeof(enabledFeatures));
+		enabledFeatures.geometryShader = true;
+		m_LogicalDevice = std::make_shared<VulkanDevice>(m_PhysicalDevice, enabledFeatures);
+		// ================================================================
+
+		// ======== Creating swapchain and window surface stage ===========
+		// HACK: using constants such as 1600 and 900 to create framebuffer specification, 
+		// instead of retreiving window's size from variable
+		SwapchainFramebufferSpecification framebufferSpecification = { 1600, 900, true };
+		m_Swapchain = std::make_shared<VulkanSwapchain>(m_Handle, m_LogicalDevice, framebufferSpecification);
+
+		// ================================================================
 		
 	}
 
@@ -83,6 +103,8 @@ namespace vkapp {
 		if (VKAPP_ENABLE_VULKAN_VALIDATION_LAYERS) {
 			layers.push_back("VK_LAYER_KHRONOS_validation");
 		}
+
 		return layers;
 	}
 }
+
