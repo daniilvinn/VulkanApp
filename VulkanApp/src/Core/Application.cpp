@@ -1,5 +1,8 @@
 #include "Application.h"
 #include "Logger.h"
+#include <Core/Base.h>
+
+#include <glfw/glfw3.h>
 
 namespace vkapp {
 	Application* Application::s_AppInstance = nullptr;
@@ -16,22 +19,22 @@ namespace vkapp {
 
 	void Application::Run()
 	{
-
-		m_Window = new ApplicationWindow();
-		while (true)
+		while (!glfwWindowShouldClose(m_Window->GetHandle()))
 		{
-
+			glfwPollEvents();
 		}
 	}
 
 	void Application::Shutdown()
 	{
-		
+		delete m_Window;
 	}
 
 	void Application::Initialize()
 	{
-		if (s_AppInstance) VKAPP_LOG_ERROR("Application already exists!");
+		VKAPP_ASSERT(!s_AppInstance, "Application already exists!");
 		s_AppInstance = this;
+		m_Window = new ApplicationWindow();
+		
 	}
 }

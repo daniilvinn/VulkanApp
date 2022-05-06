@@ -1,7 +1,10 @@
 #pragma once
 
+#define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 #include <VulkanRenderer/VulkanContext.h>
+
+#include <utility>
 
 namespace vkapp {
 
@@ -21,11 +24,15 @@ namespace vkapp {
 		ApplicationWindow(const ApplicationWindowProperties& props = ApplicationWindowProperties());
 		~ApplicationWindow();
 
-		inline GLFWwindow* GetHandle() { m_WindowHandle; };
+		inline GLFWwindow* GetHandle() { return m_WindowHandle; };
+		std::pair<int32_t, int32_t> GetSize() { return { m_Props.width, m_Props.height }; };
 
 	private:
 		GLFWwindow* m_WindowHandle;
 		VulkanContext* m_Context;
+
+		ApplicationWindowProperties m_Props;
+
 	};
 
 }

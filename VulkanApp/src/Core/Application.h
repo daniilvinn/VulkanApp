@@ -10,7 +10,8 @@ namespace vkapp {
 		~Application();
 
 		void Run();
-		inline static Application* Get() { return s_AppInstance; };
+		static Application* Get() { return s_AppInstance; }
+		inline ApplicationWindow* GetWindow() { return m_Window; }
 
 	private:
 		void Shutdown();
