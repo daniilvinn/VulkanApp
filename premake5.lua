@@ -13,6 +13,7 @@ IncludeDir = {}
 IncludeDir["Vulkan"] = "VulkanApp/vendor/Vulkan/include"
 IncludeDir["GLFW"] = "VulkanApp/vendor/GLFW/Include"
 IncludeDir["spdlog"] = "VulkanApp/vendor/spdlog/Include"
+IncludeDir["VMA"] = "VulkanApp/vendor/VulkanMemoryAllocator/include"
 
 include "VulkanApp/vendor/GLFW"
 
@@ -38,7 +39,8 @@ project "VulkanApp"
         "%{prj.name}/src",
         "%{IncludeDir.spdlog}",
         "%{IncludeDir.GLFW}",
-        "%{IncludeDir.Vulkan}"
+        "%{IncludeDir.Vulkan}",
+        "%{IncludeDir.VMA}"
     }
     
     libdirs {

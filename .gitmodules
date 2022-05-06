@@ -4,3 +4,6 @@
 [submodule "VulkanApp/vendor/spdlog"]
 	path = VulkanApp/vendor/spdlog
 	url = https://github.com/gabime/spdlog.git
+[submodule "VulkanApp/vendor/VulkanMemoryAllocator"]
+	path = VulkanApp/vendor/VulkanMemoryAllocator
+	url = https://github.com/GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator.git
