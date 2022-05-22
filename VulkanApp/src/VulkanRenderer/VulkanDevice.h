@@ -16,14 +16,15 @@ namespace vkapp {
 
 		VulkanPhysicalDevice();
 		~VulkanPhysicalDevice();
-
+		inline static std::shared_ptr<VulkanPhysicalDevice> SelectDevice() { return std::make_shared<VulkanPhysicalDevice>(); }
+		
+	public:
 		VkPhysicalDevice GetCurrentDevice() { return m_PhysicalDevice; }
 		inline const QueueFamilyIndices& GetQueueFamilyIndices() { return m_QueueFamilyIndices; };
 		inline const std::vector<VkQueueFamilyProperties>& GetQueueFamilyProps() { return m_QueueFamilyProperties; };
 		inline bool CheckExtensionPresent(const std::string& extension);
 
-		inline static std::shared_ptr<VulkanPhysicalDevice> SelectDevice() { return std::make_shared<VulkanPhysicalDevice>(); }
-
+	public:
 		operator VkPhysicalDevice() { return m_PhysicalDevice; };
 
 	private:
@@ -37,9 +38,11 @@ namespace vkapp {
 		std::unordered_set<std::string> m_SupportedExtensions;
 
 	private:
-		const float defaultQueuePriority = 0.0f;
+		const float defaultQueuePriority = 1.0f;
 		friend class VulkanDevice;
 	};
+
+
 
 	class VulkanDevice
 	{
@@ -49,6 +52,13 @@ namespace vkapp {
 
 		void Destroy();
 
+	public:
+		inline std::shared_ptr<VulkanPhysicalDevice> GetPhysicalDevice() { return m_PhysicalDevice; }
+		inline VkQueue* GetGraphicsQueue() { return &m_GraphicsQueue; }
+		inline VkQueue* GetComputeQueue() { return &m_ComputeQueue; }
+		inline VkQueue* GetTransferQueue() { return &m_TransferQueue; }
+
+	public:
 		operator VkDevice() { return m_Device; }
 
 	private:

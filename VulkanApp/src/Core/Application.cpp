@@ -4,6 +4,10 @@
 
 #include <glfw/glfw3.h>
 
+#include <VulkanRenderer/VulkanPipeline.h>
+#include <VulkanRenderer/VulkanRenderer.h>
+#include <VulkanRenderer/VulkanContext.h>
+
 namespace vkapp {
 	Application* Application::s_AppInstance = nullptr;
 
@@ -19,8 +23,21 @@ namespace vkapp {
 
 	void Application::Run()
 	{
+		VulkanPipeline pipeline;
+
+		auto swapchain = VulkanContext::Get()->GetSwapchain();
+		
+
 		while (!glfwWindowShouldClose(m_Window->GetHandle()))
 		{
+			
+			swapchain->BeginFrame();
+
+			VulkanRenderer::BeginRenderPass(swapchain->GetRenderPass(), swapchain->GetCurrentFramebuffer());
+			VulkanRenderer::Submit(pipeline);
+			VulkanRenderer::EndRenderPass();
+
+			swapchain->Present();
 			glfwPollEvents();
 		}
 	}
@@ -35,6 +52,5 @@ namespace vkapp {
 		VKAPP_ASSERT(!s_AppInstance, "Application already exists!");
 		s_AppInstance = this;
 		m_Window = new ApplicationWindow();
-		
 	}
 }

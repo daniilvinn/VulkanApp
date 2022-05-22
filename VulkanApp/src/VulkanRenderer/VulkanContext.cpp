@@ -5,6 +5,7 @@
 
 #include <VulkanRenderer/VulkanLogger.h>
 #include <VulkanRenderer/VulkanDevice.h>
+#include <VulkanRenderer/VulkanAllocator.h>
 
 #include <glfw/glfw3.h>
 
@@ -17,6 +18,7 @@ namespace vkapp {
 	{
 		VKAPP_ASSERT(handle, "Handle pointer is null!");
 		m_Handle = handle;
+		
 	}
 
 	VulkanContext::~VulkanContext()
@@ -59,28 +61,30 @@ namespace vkapp {
 		VKAPP_ASSERT(result == VK_SUCCESS, "Failed to create Vulkan Instance!");
 		// ================================================================
 
+
+
 		// =================== Vulkan Messager Init Stage =================
 		if (VKAPP_ENABLE_VULKAN_MESSENGER) VulkanLogger::Init(&m_VkInstance);
 		// ================================================================
 
+
 		// ========= Creating Physical and Logical Devices Stage ==========
 		m_PhysicalDevice = VulkanPhysicalDevice::SelectDevice();
-
-		// FIX: double VulkanPhysicalDevice constructor invoñation
 		VkPhysicalDeviceFeatures enabledFeatures;
 		memset(&enabledFeatures, 0, sizeof(enabledFeatures));
 		enabledFeatures.geometryShader = true;
+		
 		m_LogicalDevice = std::make_shared<VulkanDevice>(m_PhysicalDevice, enabledFeatures);
 		// ================================================================
 
 		// ======== Creating swapchain and window surface stage ===========
 		// HACK: using constants such as 1600 and 900 to create framebuffer specification, 
-		// instead of retreiving window's size from variable
-		SwapchainFramebufferSpecification framebufferSpecification = { 1600, 900, true };
-		m_Swapchain = std::make_shared<VulkanSwapchain>(m_Handle, m_LogicalDevice, framebufferSpecification);
-
+		// instead of retrieving window's size from variable
+		m_Swapchain = std::make_shared<VulkanSwapchain>(m_Handle, m_LogicalDevice);
 		// ================================================================
+
 		
+		VulkanAllocator::Init();
 	}
 
 	std::vector<const char*> VulkanContext::GetRequiredExtensions()

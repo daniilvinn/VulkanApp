@@ -33,6 +33,7 @@ namespace vkapp {
 				vkGetPhysicalDeviceFeatures(device, &device_features);
 				vkGetPhysicalDeviceProperties(device, &device_props);
 
+				// Checking device suitability
 				if (device_props.deviceType ==
 					VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU &&
 					device_features.geometryShader &&
@@ -93,12 +94,14 @@ namespace vkapp {
 				}
 				index++;
 			}
+
 		}
 
 		// Creating VkDeviceQueueCreateInfo's
 		{
-			// Graphics queue
+			// Graphics and presentation queue
 			{
+
 				VkDeviceQueueCreateInfo graphicsQueueInfo = {};
 				graphicsQueueInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
 				graphicsQueueInfo.pQueuePriorities = &defaultQueuePriority;
@@ -111,7 +114,7 @@ namespace vkapp {
 			// Compute Queue
 			if (m_QueueFamilyIndices.computeQueue != m_QueueFamilyIndices.graphicsQueue) {
 				VkDeviceQueueCreateInfo computeQueueInfo = {};
-				computeQueueInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+				computeQueueInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO; 
 				computeQueueInfo.pQueuePriorities = &defaultQueuePriority;
 				computeQueueInfo.queueCount = 1;
 				computeQueueInfo.queueFamilyIndex = m_QueueFamilyIndices.computeQueue;
@@ -150,9 +153,12 @@ namespace vkapp {
 		m_PhysicalDevice = physicalDevice;
 
 		std::vector<const char*> deviceExtensions;
-		if (m_PhysicalDevice->CheckExtensionPresent("VK_KHR_swapchain")) {
-			deviceExtensions.push_back("VK_KHR_swapchain");
+		if (m_PhysicalDevice->CheckExtensionPresent(VK_KHR_SWAPCHAIN_EXTENSION_NAME)) {
+			deviceExtensions.push_back(VK_KHR_SWAPCHAIN_EXTENSION_NAME);
 		}
+		//if (m_PhysicalDevice->CheckExtensionPresent(VK_EXT_VERTEX_ATTRIBUTE_DIVISOR_EXTENSION_NAME)) {
+		//	deviceExtensions.push_back(VK_EXT_VERTEX_ATTRIBUTE_DIVISOR_EXTENSION_NAME);
+		//}
 
 		VkDeviceCreateInfo deviceCreateInfo = {};
 		deviceCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
@@ -165,7 +171,7 @@ namespace vkapp {
 			deviceCreateInfo.ppEnabledExtensionNames = deviceExtensions.data();
 		}
 
-		vkCreateDevice(m_PhysicalDevice->GetCurrentDevice(), &deviceCreateInfo, nullptr, &m_Device);
+		VK_CHECK_RESULT(vkCreateDevice(m_PhysicalDevice->GetCurrentDevice(), &deviceCreateInfo, nullptr, &m_Device));
 
 		vkGetDeviceQueue(m_Device, m_PhysicalDevice->GetQueueFamilyIndices().graphicsQueue, 0, &m_GraphicsQueue);
 		vkGetDeviceQueue(m_Device, m_PhysicalDevice->GetQueueFamilyIndices().computeQueue, 0, &m_ComputeQueue);
@@ -181,8 +187,6 @@ namespace vkapp {
 
 	void VulkanDevice::Destroy()
 	{
-		
-
 		vkDeviceWaitIdle(m_Device);
 		vkDestroyDevice(m_Device, nullptr);
 		VKAPP_LOG_INFO("Logical device was destroyed!");

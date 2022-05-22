@@ -18,6 +18,14 @@
 	#define VKAPP_ASSERT(expression, ...)
 #endif
 
+#define VK_CHECK_RESULT(fn) { \
+							VkResult result = fn;\
+							if(result != VK_SUCCESS) { \
+								VKAPP_LOG_FATAL("Vulkan call failed: {0} ({1})", __FILE__, __LINE__);\
+								throw std::runtime_error("Vulkan call failed!");\
+							} \
+							}
+
 // Thanks Yan TheCherno Chernikov for this macro <3
 // https://github.com/TheCherno
 #define VKAPP_BIND_EVENT_FUNCTION(fn) [this](auto&&... args) -> decltype(auto) { return this->fn(std::forward<decltype(args)>(args)...); }

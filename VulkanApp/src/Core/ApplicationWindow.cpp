@@ -1,5 +1,6 @@
 #include "ApplicationWindow.h"
 
+#include <VulkanRenderer/VulkanRenderer.h>
 #include <Core/Logger.h>
 
 namespace vkapp {
@@ -28,6 +29,7 @@ namespace vkapp {
 
 		m_Context = new VulkanContext(m_WindowHandle);
 		m_Context->Init();
+		VulkanRenderer::Init();
 	}
 
 	ApplicationWindow::~ApplicationWindow()

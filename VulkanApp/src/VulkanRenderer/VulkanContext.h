@@ -32,8 +32,8 @@ namespace vkapp {
 		static VulkanContext* Get() { return s_Instance; };
 
 		static VkInstance GetVkInstance() { return s_Instance->m_VkInstance; }
-		// VkPhysicalDevice GetPhysicalDevice(); TO BE IMPLEMENTED
-		inline std::shared_ptr<VulkanDevice> GetDevice() { return std::make_shared<VulkanDevice>(*m_LogicalDevice); };
+		std::shared_ptr<VulkanDevice> GetDevice() { return std::make_shared<VulkanDevice>(*m_LogicalDevice); };
+		std::shared_ptr<VulkanSwapchain> GetSwapchain() { return m_Swapchain; };
 
 
 	private:
@@ -50,8 +50,6 @@ namespace vkapp {
 
 		std::shared_ptr<VulkanSwapchain> m_Swapchain;
 
-	private:
-		VkSurfaceKHR m_Surface;
 	};
 
 }
